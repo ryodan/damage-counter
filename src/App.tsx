@@ -1,9 +1,8 @@
-import React from 'react';
-import DamageCounterApp from './store/components/DamageCounterApp';
+import DamageCounterApp from './components/DamageCounterApp';
 
 function App() {
   return (
-    <div className="w-full">
+    <div className="App">
       <DamageCounterApp />
     </div>
   );

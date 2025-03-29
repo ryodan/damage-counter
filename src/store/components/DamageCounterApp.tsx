@@ -37,6 +37,58 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, message, onConfirm,
   );
 };
 
+// ベンチ選択モーダルの型定義
+interface BenchSelectionModalProps {
+  isOpen: boolean;
+  title: string;
+  benchPokemons: (Pokemon | null)[];
+  onSelect: (benchIndex: number) => void;
+  onCancel: () => void;
+}
+
+// ベンチ選択モーダルコンポーネント
+const BenchSelectionModal: React.FC<BenchSelectionModalProps> = ({ 
+  isOpen, 
+  title, 
+  benchPokemons, 
+  onSelect, 
+  onCancel 
+}) => {
+  if (!isOpen) return null;
+  
+  // ポケモンがセットされているベンチのみを表示
+  const availableBenches = benchPokemons
+    .map((pokemon, index) => ({ pokemon, index }))
+    .filter(item => item.pokemon !== null);
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center" style={{ position: 'fixed' }}>
+      <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full m-4">
+        <p className="mb-6 text-center text-lg font-bold text-black">{title}</p>
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {availableBenches.map(({ index }) => (
+            <button
+              key={index}
+              onClick={() => onSelect(index)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-base"
+            >
+              ベンチ{index + 1}
+            </button>
+          ))}
+        </div>
+        <div className="flex justify-center">
+          <button
+            onClick={onCancel}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg text-base"
+          >
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // メインアプリコンポーネント
 const DamageCounterApp: React.FC = () => {
   // Zustandストアからステートとアクションを取得
@@ -62,6 +114,14 @@ const DamageCounterApp: React.FC = () => {
     onCancel: () => {}
   });
   
+  // ベンチ選択モーダルの状態
+  const [benchSelectionModal, setBenchSelectionModal] = useState({
+    isOpen: false,
+    title: 'どのベンチポケモンをだしますか？',
+    onSelect: (benchIndex: number) => {},
+    onCancel: () => {}
+  });
+  
   // 確認モーダルを表示する関数
   const showConfirmModal = () => {
     setConfirmModal({
@@ -73,6 +133,31 @@ const DamageCounterApp: React.FC = () => {
       },
       onCancel: () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
+  
+  // ベンチ選択モーダルを表示する関数
+  const showBenchSelectionModal = () => {
+    // ベンチにポケモンがいるか確認
+    const hasBenchPokemon = benchPokemons.some(p => p !== null);
+    
+    if (!hasBenchPokemon) {
+      // ベンチにポケモンがいない場合はエラーメッセージを表示
+      usePokemonStore.getState().showError('ベンチポケモンがいません');
+      return;
+    }
+    
+    setBenchSelectionModal({
+      isOpen: true,
+      title: 'どのベンチポケモンをだしますか？',
+      onSelect: (benchIndex: number) => {
+        // 選択したベンチポケモンとバトル場のポケモンを入れ替え
+        moveToBattlefield(benchIndex);
+        setBenchSelectionModal(prev => ({ ...prev, isOpen: false }));
+      },
+      onCancel: () => {
+        setBenchSelectionModal(prev => ({ ...prev, isOpen: false }));
       }
     });
   };
@@ -114,21 +199,8 @@ const DamageCounterApp: React.FC = () => {
     // 操作ボタン
     const handleClear = () => {
       if (isPokemonActive) {
-        // バトル場の場合は、ダメージと特殊状態のみリセット
-        if (pokemon) {
-          const resetPokemon: Pokemon = {
-            ...pokemon,
-            damage: 0,
-            conditions: {
-              poisoned: false,
-              burned: false,
-              asleep: false,
-              confused: false,
-              paralyzed: false
-            }
-          };
-          clearPokemon(isPokemonActive, index, resetPokemon);
-        }
+        // バトル場の場合は、ベンチ選択モーダルを表示
+        showBenchSelectionModal();
       } else {
         // ベンチの場合は完全に削除
         clearPokemon(isPokemonActive, index);
@@ -251,7 +323,7 @@ const DamageCounterApp: React.FC = () => {
                 onClick={handleClear}
                 className="bg-gray-600 hover:bg-gray-700 text-white text-sm border border-gray-700 px-2 sm:px-4 py-2 rounded-lg flex-1 min-w-0"
               >
-                クリア
+                きぜつ
               </button>
             </>
           ) : (
@@ -308,7 +380,7 @@ const DamageCounterApp: React.FC = () => {
               onClick={showConfirmModal}
               className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg text-base border border-gray-600 shadow-md"
             >
-              リセット
+              バトルをはじめる
             </button>
           </div>
         </div>
@@ -328,6 +400,15 @@ const DamageCounterApp: React.FC = () => {
           message={confirmModal.message}
           onConfirm={confirmModal.onConfirm}
           onCancel={confirmModal.onCancel}
+        />
+        
+        {/* ベンチ選択モーダル */}
+        <BenchSelectionModal
+          isOpen={benchSelectionModal.isOpen}
+          title={benchSelectionModal.title}
+          benchPokemons={benchPokemons}
+          onSelect={benchSelectionModal.onSelect}
+          onCancel={benchSelectionModal.onCancel}
         />
       </div>
     </div>

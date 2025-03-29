@@ -42,7 +42,7 @@ interface BenchSelectionModalProps {
   isOpen: boolean;
   title: string;
   benchPokemons: (Pokemon | null)[];
-  onSelect: (benchIndex: number) => void;
+  onSelect: (index: number) => void;
   onCancel: () => void;
 }
 
@@ -118,7 +118,7 @@ const DamageCounterApp: React.FC = () => {
   const [benchSelectionModal, setBenchSelectionModal] = useState({
     isOpen: false,
     title: 'どのベンチポケモンをだしますか？',
-    onSelect: (benchIndex: number) => {},
+    onSelect: (index: number) => {},
     onCancel: () => {}
   });
   

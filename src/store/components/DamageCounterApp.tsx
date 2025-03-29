@@ -152,8 +152,18 @@ const DamageCounterApp: React.FC = () => {
       isOpen: true,
       title: 'どのベンチポケモンをだしますか？',
       onSelect: (index: number) => {
-        // 選択したベンチポケモンとバトル場のポケモンを入れ替え
-        moveToBattlefield(index);
+        // 選択したベンチポケモンをバトル場に移動し、元のバトル場のポケモンは削除
+        const benchPokemon = benchPokemons[index];
+        if (benchPokemon) {
+          // ベンチポケモンをバトル場に設定
+          usePokemonStore.getState().setActivePokemon(benchPokemon);
+          
+          // 選択したベンチを空にする
+          const newBenchPokemons = [...benchPokemons];
+          newBenchPokemons[index] = null;
+          usePokemonStore.getState().setBenchPokemons(newBenchPokemons);
+        }
+        
         setBenchSelectionModal(prev => ({ ...prev, isOpen: false }));
       },
       onCancel: () => {

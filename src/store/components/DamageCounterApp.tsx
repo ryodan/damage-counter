@@ -151,9 +151,9 @@ const DamageCounterApp: React.FC = () => {
     setBenchSelectionModal({
       isOpen: true,
       title: 'どのベンチポケモンをだしますか？',
-      onSelect: (benchIndex: number) => {
+      onSelect: (index: number) => {
         // 選択したベンチポケモンとバトル場のポケモンを入れ替え
-        moveToBattlefield(benchIndex);
+        moveToBattlefield(index);
         setBenchSelectionModal(prev => ({ ...prev, isOpen: false }));
       },
       onCancel: () => {

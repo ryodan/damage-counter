@@ -245,7 +245,7 @@ const DamageCounterApp: React.FC = () => {
                 onClick={moveToBench}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-4 py-2 rounded-lg text-sm border border-blue-700 flex-1 min-w-0"
               >
-                ベンチへ
+                にげる
               </button>
               <button
                 onClick={handleClear}

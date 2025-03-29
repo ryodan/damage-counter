@@ -118,7 +118,7 @@ const DamageCounterApp: React.FC = () => {
   const [benchSelectionModal, setBenchSelectionModal] = useState({
     isOpen: false,
     title: 'どのベンチポケモンをだしますか？',
-    onSelect: (index: number) => {},
+    onSelect: (_: number) => {},
     onCancel: () => {}
   });
   

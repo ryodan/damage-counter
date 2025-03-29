@@ -100,7 +100,7 @@ const DamageCounterApp: React.FC = () => {
             onClick={() => setupPokemon(isPokemonActive, index)}
             className="bg-black hover:bg-gray-800 text-white px-4 md:px-5 py-2 md:py-3 rounded-lg text-sm md:text-base shadow-sm"
           >
-            ポケモンを設定
+            ポケモンをだす
           </button>
         </div>
       );
@@ -266,7 +266,7 @@ const DamageCounterApp: React.FC = () => {
                 onClick={handleClear}
                 className="bg-gray-600 hover:bg-gray-700 text-white text-sm border border-gray-700 px-2 sm:px-4 py-2 rounded-lg flex-1 min-w-0"
               >
-                削除
+                けす
               </button>
             </>
           )}

@@ -1,4 +1,4 @@
-import DamageCounterApp from './components/DamageCounterApp';
+import DamageCounterApp from './store/components/DamageCounterApp';
 
 function App() {
   return (
